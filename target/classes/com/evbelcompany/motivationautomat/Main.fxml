@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<HBox cache="true" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.evbelcompany.motivationautomat.MainController">
+   <children>
+      <VBox HBox.hgrow="ALWAYS">
+         <children>
+            <Label text="Задачи">
+               <font>
+                  <Font name="Verdana Pro Black Italic" size="14.0" />
+               </font></Label>
+            <TableView fx:id="tableTasks" HBox.hgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="idColumn" prefWidth="30.0" text="№" />
+                <TableColumn fx:id="taskColumn" prefWidth="285.0" text="Задача" />
+                <TableColumn fx:id="pointsColumn" prefWidth="85.0" text="К-во баллов" />
+              </columns>
+            </TableView>
+            <HBox>
+               <children>
+                  <AnchorPane prefHeight="30.0" prefWidth="400.0">
+                     <children>
+                        <Button layoutX="2.0" layoutY="1.0" mnemonicParsing="false" onAction="#btnNewTask" text="Новая задача" />
+                        <Button layoutX="102.0" layoutY="1.0" mnemonicParsing="false" onAction="#btnDeleteTask" text="Удалить задачу" />
+                        <Button layoutX="209.0" layoutY="1.0" mnemonicParsing="false" onAction="#btnCompleteTask" text="Переместить в текущие задачи" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox HBox.hgrow="ALWAYS">
+         <children>
+            <Label alignment="CENTER" text="Текущие задачи">
+               <font>
+                  <Font name="Verdana Pro Black Italic" size="14.0" />
+               </font></Label>
+            <TableView fx:id="currentTableTask" HBox.hgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="currentIdColumn" prefWidth="30.0" text="№" />
+                <TableColumn fx:id="currentTaskColumn" prefWidth="285.0" text="Текущая задача" />
+                <TableColumn fx:id="currentPointsColumn" prefWidth="85.0" text="К-во баллов" />
+              </columns>
+            </TableView>
+            <HBox>
+               <children>
+                  <AnchorPane prefHeight="30.0" prefWidth="400.0">
+                     <children>
+                        <Button layoutX="5.0" layoutY="1.0" mnemonicParsing="false" onAction="#btnCancelCurrentTask" text="Отменить задачу" />
+                        <Button layoutX="124.0" layoutY="1.0" mnemonicParsing="false" onAction="#btnFinishCurrentTask" text="Закончить задачу" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox HBox.hgrow="ALWAYS">
+         <children>
+            <Label text="Выполненные задачи">
+               <font>
+                  <Font name="Verdana Pro Bold Italic" size="14.0" />
+               </font></Label>
+            <TableView fx:id="completedTaskDataTable" HBox.hgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="completedIdColumn" prefWidth="30.0" text="№" />
+                <TableColumn fx:id="completedTaskColumn" prefWidth="285.0" text="Законченая задача" />
+                <TableColumn fx:id="completedPointsColumn" prefWidth="85.0" text="К-во баллов" />
+              </columns>
+            </TableView>
+            <AnchorPane prefHeight="30.0" prefWidth="275.0">
+               <children>
+                  <Label layoutX="11.0" layoutY="6.0" text="Количество доступных баллов">
+                     <font>
+                        <Font name="Verdana Pro Italic" size="12.0" />
+                     </font>
+                  </Label>
+                  <Separator layoutX="212.0" layoutY="4.0" orientation="VERTICAL" prefHeight="20.0" />
+                  <Label fx:id="summaryCountPoints" layoutX="226.0" layoutY="5.0" text="0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+      <VBox HBox.hgrow="ALWAYS">
+         <children>
+            <Label text="Ящик с мотивациями">
+               <font>
+                  <Font name="Verdana Pro Bold Italic" size="14.0" />
+               </font></Label>
+            <TableView fx:id="motivatorsTable" HBox.hgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="motivatorsColumn" prefWidth="200.0" text="Мотивация" />
+                <TableColumn fx:id="countPointsMotivatorsColumn" prefWidth="75.0" text="Цена" />
+              </columns>
+            </TableView>
+             <HBox>
+                 <children>
+                  <AnchorPane prefHeight="30.0" prefWidth="275.0">
+                     <children>
+                           <Button layoutX="3.0" layoutY="1.0" mnemonicParsing="false" onAction="#btnNewMotivation" text="Новая" />
+                           <Button layoutX="64.0" layoutY="1.0" mnemonicParsing="false" onAction="#btnRemoveMotivation" text="Удалить" />
+                           <Button layoutX="134.0" layoutY="1.0" mnemonicParsing="false" onAction="#btnAchiveMotivation" text="Реализовать" />
+                     </children>
+                  </AnchorPane>
+                 </children>
+             </HBox>
+         </children>
+      </VBox>
+   </children>
+</HBox>
