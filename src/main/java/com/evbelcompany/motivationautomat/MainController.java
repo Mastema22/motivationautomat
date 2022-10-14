@@ -1,5 +1,8 @@
 package com.evbelcompany.motivationautomat;
 
+
+import com.evbelcompany.motivationautomat.models.Motivator;
+import com.evbelcompany.motivationautomat.models.Task;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -8,28 +11,41 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 
-import java.io.IOException;
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
+public class MainController implements Serializable {
 
+    //-------------Obsertvable Lists for all windows-----------------
+    private static final ObservableList<Task> tasksData = FXCollections.observableArrayList();
+    private static final ObservableList<Task> currentTaskData = FXCollections.observableArrayList();
+    private static final ObservableList<Motivator> motivatorsData = FXCollections.observableArrayList();
 
-public class MainController  {
+    private static final ObservableList<Task> completedTaskDataReport = FXCollections.observableArrayList();
+    private static final ObservableList<Motivator> completedMotivatorsDataReport = FXCollections.observableArrayList();
 
-    private static ObservableList<Task> tasksData = FXCollections.observableArrayList();
+    //--------------Serializable ArrayLists for save/load data-----------------------------------------
+    private final Set<Task> tasksDataList = new HashSet<>();
+    private Set<Task> newTask = new HashSet<Task>();
+    private final Set<Motivator> motivationDataList = new HashSet<>();
+    private Set<Motivator> newMotivation = new HashSet<Motivator>();
 
-    private static ObservableList<Task> currentTasksData = FXCollections.observableArrayList();
-
-    private static ObservableList<Task> completedTasksData = FXCollections.observableArrayList();
-
-    private static ObservableList<Motivator> motivatorsData = FXCollections.observableArrayList();
-
+    //---------------------------Variables---------------------------
     private EnterFormController enterFormController;
     private EnterMotivatorsFormController enterMotivatorsFormController;
-    private Integer counterPoints;
+    private RealizedMotivationsController realizedMotivationsController;
+    private Task task;
+    private Motivator motivator;
+    private String status;
 
-    //--------------------------------------------------------
+    //--------------------------Main file for save/load data------------------------------
+    File fileBaseTasks = new File("src/main/java/com/evbelcompany/motivationautomat/data/base01.tmb");
+    File fileBaseMotivations = new File("src/main/java/com/evbelcompany/motivationautomat/data/base02.tmb");
 
-    //Список с задачами
-
+    //-------------------------FXML elements for the new tasks-------------------------------
     @FXML
     private TableView<Task> tableTasks;
 
@@ -45,8 +61,7 @@ public class MainController  {
     @FXML
     private Button btnNewTask;
 
-    //Список с текущими задачами
-
+    //-------------------------FXML elements for the current tasks-------------------------------
     @FXML
     private TableView<Task> currentTableTask;
 
@@ -59,24 +74,23 @@ public class MainController  {
     @FXML
     private TableColumn<Task, Integer> currentPointsColumn;
 
-    //Список с выполненными задачами
+    //-------------------------FXML elements for the completed tasks-------------------------------
+    @FXML
+    Label availablePoints;
 
     @FXML
-    private TableView<Task> completedTaskDataTable;
+    private Label totalCompletedTasks;
 
     @FXML
-    private TableColumn<Task, Integer> completedIdColumn;
+    private Label totalCompletedMotivations;
 
     @FXML
-    private TableColumn<Task, String> completedTaskColumn;
+    private Label potentialTasks;
 
     @FXML
-    private TableColumn<Task, Integer> completedPointsColumn;
+    private Label potentialMotivations;
 
-    @FXML
-    private Label summaryCountPoints;
-
-    //Списко с мотиваторами
+    //-------------------------FXML elements for the motivators list-------------------------------
 
     @FXML
     private TableView<Motivator> motivatorsTable;
@@ -87,98 +101,113 @@ public class MainController  {
     @FXML
     private TableColumn<Motivator, Integer> countPointsMotivatorsColumn;
 
-    //--------------------------------------------------------
-
-
-    public MainController(){
-
-    }
-
+    //-------------------------FXML of initialize-------------------------------
     @FXML
     public void initialize() {
+        realizedMotivationsController = new RealizedMotivationsController();
+
+        loadDataTasks();
+        loadDataMotivators();
 
         tableTasks.setEditable(true);
-        idColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("number"));
-        taskColumn.setCellValueFactory(new PropertyValueFactory<Task,String>("task"));
+        /*idColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("number"));*/
+        taskColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("task"));
         pointsColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("point"));
-        tableTasks.setItems(tasksData);
+        tableTasks.setItems(getTasksData());
 
         currentTableTask.setEditable(true);
-        currentIdColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("number"));
-        currentTaskColumn.setCellValueFactory(new PropertyValueFactory<Task,String>("task"));
+        /*currentIdColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("number"));*/
+        currentTaskColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("task"));
         currentPointsColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("point"));
-        currentTableTask.setItems(currentTasksData);
-
-        completedTaskDataTable.setEditable(true);
-        completedIdColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("number"));
-        completedTaskColumn.setCellValueFactory(new PropertyValueFactory<Task,String>("task"));
-        completedPointsColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("point"));
-        completedTaskDataTable.setItems(completedTasksData);
+        currentTableTask.setItems(getCurrentTaskData());
 
         motivatorsTable.setEditable(true);
-        motivatorsColumn.setCellValueFactory(new PropertyValueFactory<Motivator,String>("motivator"));
+        motivatorsColumn.setCellValueFactory(new PropertyValueFactory<Motivator, String>("motivator"));
         countPointsMotivatorsColumn.setCellValueFactory(new PropertyValueFactory<Motivator, Integer>("points"));
-        motivatorsTable.setItems(motivatorsData);
+        motivatorsTable.setItems(getMotivatorsData());
+
+        updateStatusInformation();
+
+        delaySaveData();
 
     }
-    //--------------------------------------------------------
 
+    //-----------------------------Metods for get observable lists---------------------------
     public ObservableList<Task> getTasksData() {
         return tasksData;
     }
 
-    public ObservableList<Task> getCurrentTasksData() {
-        return currentTasksData;
+    public ObservableList<Task> getCurrentTaskData() {
+        return currentTaskData;
     }
 
-    public ObservableList<Task> getCompletedTasksData() {
-        return completedTasksData;
+    public ObservableList<Task> getCompletedTasksDataReport() {
+        return completedTaskDataReport;
     }
 
     public ObservableList<Motivator> getMotivatorsData() {
         return motivatorsData;
     }
 
-    //--------------------------------------------------------
-
-    public void addTasksData(Task newTask){
-        tasksData.add(newTask);
+    public ObservableList<Motivator> getCompletedMotivatorsDataReport() {
+        return completedMotivatorsDataReport;
     }
 
-    public void addCurrentTaskData(Task task){
-        currentTasksData.add(task);
+    //-----------------------------Metods for get Arrive lists---------------------------
+
+    public Set<Task> getTasksDataList() {
+        return tasksDataList;
     }
 
-    public void addCompletedTaskData(Task task){
-        completedTasksData.add(task);
+    //-----------------------------Metods for set Arrive lists---------------------------
+    public void addTasksDataList(Task task) {
+        tasksDataList.add(task);
     }
-
-    public void addMotivatorsData(Motivator motivator){
+    public void addMotivatonDataList(Motivator motivator) {
         motivatorsData.add(motivator);
     }
 
-    //--------------------------------------------------------
-    public Integer getCounterPoints() {
-        counterPoints = 0;
-        for(Task currentTask : completedTasksData){
-            counterPoints += currentTask.getPoint();
-
-        }
-        return counterPoints;
+    //-----------------------------Metods for set observable lists---------------------------
+    public void addTasksData(Task newTask) {
+        tasksData.add(newTask);
     }
 
+    public void addCurrentTasksData(Task task) {
+        currentTaskData.add(task);
+    }
+
+    public void addCompletedTasksDataReport(Task task) {
+        completedTaskDataReport.add(task);
+    }
+
+    public void addMotivatorsData(Motivator motivator) {
+        motivatorsData.add(motivator);
+    }
+
+    public void addCompletedMotivatorsDataReport(Motivator motivator) { completedMotivatorsDataReport.add(motivator);}
+
+    //------------------------------Metod for get counter points----------------------------
+
+
     //--------------------------------------------------------
 
+    public MainController() {
+    }
 
     public void btnNewTask(ActionEvent actionEvent) throws IOException {
         enterFormController = new EnterFormController();
         enterFormController.initializeEnterFormController();
+        updateStatusInformation();
+
     }
 
     public void btnDeleteTask(ActionEvent actionEvent) {
         int selectedIndex = tableTasks.getSelectionModel().getSelectedIndex();
-        if(selectedIndex >=0) {
+        if (selectedIndex >= 0) {
+            task = tableTasks.getItems().get(selectedIndex);
+            task.setStatus("REMOVED");
             tableTasks.getItems().remove(selectedIndex);
+            updateStatusInformation();
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Внимание!");
@@ -190,10 +219,12 @@ public class MainController  {
 
     public void btnCompleteTask(ActionEvent actionEvent) {
         int selectedIndex = tableTasks.getSelectionModel().getSelectedIndex();
-        if(selectedIndex >=0) {
-            addCurrentTaskData(tasksData.get(selectedIndex));
+        if (selectedIndex >= 0) {
+            task = tasksData.get(selectedIndex);
+            task.setStatus("CURRENT");
+            addCurrentTasksData(task);
             tableTasks.getItems().remove(selectedIndex);
-
+            updateStatusInformation();
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Внимание!");
@@ -205,9 +236,12 @@ public class MainController  {
 
     public void btnCancelCurrentTask(ActionEvent actionEvent) {
         int selectedIndex = currentTableTask.getSelectionModel().getSelectedIndex();
-        if(selectedIndex >=0) {
-            addTasksData(currentTasksData.get(selectedIndex));
+        if (selectedIndex >= 0) {
+            task = currentTaskData.get(selectedIndex);
+            task.setStatus("NEW");
+            addTasksData(task);
             currentTableTask.getItems().remove(selectedIndex);
+            updateStatusInformation();
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Внимание!");
@@ -217,14 +251,15 @@ public class MainController  {
         }
     }
 
-
     public void btnFinishCurrentTask(ActionEvent actionEvent) {
+        realizedMotivationsController = new RealizedMotivationsController();
         int selectedIndex = currentTableTask.getSelectionModel().getSelectedIndex();
-        if(selectedIndex >=0) {
-            addCompletedTaskData(currentTasksData.get(selectedIndex));
+        if (selectedIndex >= 0) {
+            task = currentTaskData.get(selectedIndex);
+            task.setStatus("FINISHED");
+            addCompletedTasksDataReport(task);
             currentTableTask.getItems().remove(selectedIndex);
-            getCounterPoints();
-            summaryCountPoints.setText(String.valueOf(counterPoints));
+            updateStatusInformation();
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Внимание!");
@@ -236,8 +271,12 @@ public class MainController  {
 
     public void btnRemoveMotivation(ActionEvent actionEvent) {
         int selectedIndex = motivatorsTable.getSelectionModel().getSelectedIndex();
-        if(selectedIndex >=0) {
+        if (selectedIndex >= 0) {
+            motivator = motivatorsTable.getItems().get(selectedIndex);
+            motivator.setStatus("REMOVED");
+            System.out.println("Removed the motivation");
             motivatorsTable.getItems().remove(selectedIndex);
+            updateStatusInformation();
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Внимание!");
@@ -248,10 +287,200 @@ public class MainController  {
     }
 
     public void btnNewMotivation(ActionEvent actionEvent) throws IOException {
+        updateStatusInformation();
         enterMotivatorsFormController = new EnterMotivatorsFormController();
         enterMotivatorsFormController.initializeEnterMotivatorFormController();
+        updateStatusInformation();
+
     }
 
-    public void btnAchiveMotivation(ActionEvent actionEvent) {
+    public void btnAchiveMotivation(ActionEvent actionEvent) throws IOException {
+        int selectedIndex = motivatorsTable.getSelectionModel().getSelectedIndex();
+        if(selectedIndex >= 0) {
+            System.out.println("Achieved the motivation");
+            motivator = motivatorsData.get(selectedIndex);
+            motivator.setStatus("COMPLETED");
+            addCompletedMotivatorsDataReport(motivator);
+            System.out.println("Go to the report: " + motivator.getMotivator() + " " + motivator.getPoints() + " " + motivator.getStatus());
+            motivatorsTable.getItems().remove(selectedIndex);
+            updateStatusInformation();
+        }else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Внимание!");
+            alert.setHeaderText("Не выбрана ни одна мотивация для реализации!");
+            alert.setContentText("Пожалуйста, выбери из таблицы мотивацию для реализации.");
+            alert.showAndWait();
+        }
+    }
+
+    public void saveDataTasks() {
+        for (Task taskFormNewTasks : tasksData) {
+            tasksDataList.add(taskFormNewTasks);
+        }
+        for (Task taskFromCurrentTasks : currentTaskData) {
+            tasksDataList.add(taskFromCurrentTasks);
+        }
+        for (Task taskFromCompletedTasks : completedTaskDataReport) {
+            tasksDataList.add(taskFromCompletedTasks);
+        }
+
+        for (Task task : tasksDataList) {
+            System.out.println("Saved next the task: " + task.getNumber() + " " + task.getTask() + " " + task.getPoint() + " " + task.getStatus());
+        }
+
+
+        try (FileOutputStream fosNewTask = new FileOutputStream(fileBaseTasks);
+             ObjectOutputStream oosNewTask = new ObjectOutputStream(fosNewTask)
+        ) {
+
+            oosNewTask.writeObject(tasksDataList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveDataMotivators() {
+        for (Motivator motivationFromNewMotivations : motivatorsData) {
+            motivationDataList.add(motivationFromNewMotivations);
+        }
+        for (Motivator motivatorFromCompletedMotivations : completedMotivatorsDataReport) {
+            motivationDataList.add(motivatorFromCompletedMotivations);
+        }
+        for (Motivator motivator : motivationDataList) {
+            System.out.println("Saved next the motivator: " + motivator.getMotivator() + " " + motivator.getPoints() + " " + motivator.getStatus());
+        }
+
+        try (FileOutputStream fosNewMotivator = new FileOutputStream(fileBaseMotivations);
+             ObjectOutputStream oosNewMotivator = new ObjectOutputStream(fosNewMotivator)
+        ) {
+
+            oosNewMotivator.writeObject(motivationDataList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadDataTasks() {
+
+        try (FileInputStream fisNewTask = new FileInputStream(fileBaseTasks);
+             ObjectInputStream oisNewTask = new ObjectInputStream(fisNewTask)) {
+
+            newTask = ((Set<Task>) oisNewTask.readObject());
+
+            for (Task task : newTask) {
+                if (task.getStatus().contains("NEW")) {
+                    tasksData.add(task);
+                    System.out.println("Loaded the new tasks: " + task.getNumber() + task.getTask() + task.getPoint());
+                }
+                if (task.getStatus().contains("CURRENT")) {
+                    currentTaskData.add(task);
+                    System.out.println("Loaded the current tasks: " + task.getNumber() + task.getTask() + task.getPoint());
+                }
+                if (task.getStatus().contains("FINISHED")) {
+                    completedTaskDataReport.add(task);
+                    System.out.println("Loaded the completed tasks: " + task.getNumber() + task.getTask() + task.getPoint());
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadDataMotivators() {
+        try (
+                FileInputStream fisNewMotivator = new FileInputStream(fileBaseMotivations);
+                ObjectInputStream oisNewMotivator = new ObjectInputStream(fisNewMotivator)) {
+
+            newMotivation = (Set<Motivator>) oisNewMotivator.readObject();
+
+            for (Motivator motivator : newMotivation) {
+                if(motivator.getStatus().contains("NEW")) {
+                    motivatorsData.add(motivator);
+                    System.out.println("Loaded the new motivator: " + motivator.getMotivator() + " " + motivator.getPoints());
+                }
+                if(motivator.getStatus().contains("COMPLETED")) {
+                    completedMotivatorsDataReport.add(motivator);
+                    System.out.println("Loaded the completed motivator: " + motivator.getMotivator() + " " + motivator.getPoints());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delaySaveData() {
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                saveDataTasks();
+                saveDataMotivators();
+                System.out.println("Timer for save the date is working.");
+            }
+        };
+        Timer timer = new Timer(true);
+        timer.scheduleAtFixedRate(timerTask,0,10*1000);
+    }
+
+    public void btnReport(ActionEvent actionEvent) throws IOException {
+        updateStatusInformation();
+        realizedMotivationsController = new RealizedMotivationsController();
+        realizedMotivationsController.initializeRealizedMotivationsFrom();
+        updateStatusInformation();
+
+    }
+
+
+    public void updateStatusInformation()  {
+        int totalCompletedTasksCount = 0;
+        int totalCompletedMotivationsCount = 0;
+        int countPotentialTask = 0;
+        int countPotentialMotivation = 0;
+
+        int pointsCompletedTask = 0;
+        int pointsCompletedMotivation = 0;
+        for (Task task : completedTaskDataReport) {
+             pointsCompletedTask += task.getPoint();
+        }
+        for (Motivator motivator : completedMotivatorsDataReport) {
+            pointsCompletedMotivation += motivator.getPoints();
+        }
+        availablePoints.setText(String.valueOf(pointsCompletedTask-pointsCompletedMotivation));
+        System.out.println("The available points were updated.");
+
+        for (Task task : getCompletedTasksDataReport()) {
+            if(task != null) {
+                totalCompletedTasksCount += 1;
+            }
+        }
+        totalCompletedTasks.setText(String.valueOf(totalCompletedTasksCount));
+        System.out.println("The completed tasks were updated.");
+
+        for (Motivator motivator : getCompletedMotivatorsDataReport()) {
+            if (motivator != null) {
+                totalCompletedMotivationsCount += 1;
+            }
+        }
+        totalCompletedMotivations.setText(String.valueOf(totalCompletedMotivationsCount));
+        System.out.println("The completed motivations were updated.");
+
+        for (Task task : getTasksData()) {
+            if(task != null) {
+                countPotentialTask += task.getPoint();
+            }
+        }
+        potentialTasks.setText(String.valueOf(countPotentialTask));
+        System.out.println("The potential tasks were updated.");
+
+        for (Motivator motivator : getMotivatorsData()) {
+            if (motivator != null) {
+                countPotentialMotivation += motivator.getPoints();
+            }
+
+        }
+        potentialMotivations.setText(String.valueOf(countPotentialMotivation));
+        System.out.println("The potential motivations were updated.");
     }
 }

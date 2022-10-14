@@ -1,5 +1,6 @@
 package com.evbelcompany.motivationautomat;
 
+import com.evbelcompany.motivationautomat.models.Motivator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,22 +9,24 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-public class EnterMotivatorsFormController {
+public class EnterMotivatorsFormController implements Serializable {
     private Stage STAGE = new Stage();
     private Scene SCENE;
     private Parent ROOT;
     private Motivator newMotivator;
 
-    private Main main;
-    private MainController mainController = new MainController();
+
+    private final MainController mainController = new MainController();
 
     private Alert alertINFO;
-
-    private String discriptionMotivatorText;
+    private Main main;
+    private String discriptionMotivator;
     private Integer countPointsMotivator;
 
 
@@ -39,7 +42,7 @@ public class EnterMotivatorsFormController {
     @FXML
     private Button saveEnterMotivatorForm;
 
-    public void setMain(Main main){
+    public void setMain(Main main) {
         this.main = main;
     }
 
@@ -48,14 +51,16 @@ public class EnterMotivatorsFormController {
         SCENE = new Scene(ROOT,300,140);
         STAGE.setScene(SCENE);
         STAGE.setTitle("Новая мотивация");
+        STAGE.getIcons().add(new Image(Main.class.getResourceAsStream("icons/iconAppLarge.png")));
         STAGE.showAndWait();
     }
 
     public void btnCancelEnterMotivatorForm(ActionEvent actionEvent) {
         STAGE = (Stage) cancelEnterMotivatorForm.getScene().getWindow();
+        System.out.println("Cancel the new motivation");
         STAGE.close();
     }
-    @FXML
+
     public void btnSaveEnterMotivatorForm(ActionEvent actionEvent) {
         STAGE = (Stage)  saveEnterMotivatorForm.getScene().getWindow();
 
@@ -63,12 +68,13 @@ public class EnterMotivatorsFormController {
             if (!countPointsMotivatorText.getText().matches("[A-zА-я]") &
                     Integer.parseInt(countPointsMotivatorText.getText()) <= 1000000 & Integer.parseInt(countPointsMotivatorText.getText()) >= 1) {
 
-                discriptionMotivatorText = motivatorDiscriptionText.getText();
+                discriptionMotivator = motivatorDiscriptionText.getText();
                 countPointsMotivator = Integer.parseInt(countPointsMotivatorText.getText());
 
-                newMotivator = new Motivator(discriptionMotivatorText, countPointsMotivator);
+                newMotivator = new Motivator(discriptionMotivator, countPointsMotivator, "NEW");
 
                 mainController.addMotivatorsData(newMotivator);
+                System.out.println("Made the new motivation " + newMotivator.getMotivator() + " " + newMotivator.getPoints() + " " + newMotivator.getStatus());
 
                 STAGE.close();
 
