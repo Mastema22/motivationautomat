@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="700.0" prefWidth="600.0" stylesheets="@CSS%20module/skin.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.evbelcompany.motivationautomat.RealizedMotivationsController">
+   <children>
+      <VBox layoutX="10.0" layoutY="11.0" prefHeight="689.0" prefWidth="580.0">
+         <children>
+            <AnchorPane prefHeight="40.0" prefWidth="580.0">
+               <children>
+                  <Label layoutX="56.0" layoutY="10.0" text="Выполненные задачи">
+                     <font>
+                        <Font name="Verdana Pro Bold Italic" size="14.0" />
+                     </font></Label>
+                  <Separator layoutX="284.0" layoutY="4.0" orientation="VERTICAL" prefHeight="20.0" />
+                  <Label layoutX="316.0" layoutY="8.0" text="Реализованные мотиваторы">
+                     <font>
+                        <Font name="Verdana Pro Bold Italic" size="14.0" />
+                     </font></Label>
+               </children>
+            </AnchorPane>
+            <HBox prefHeight="625.0" prefWidth="580.0">
+               <children>
+                  <HBox prefHeight="585.0" prefWidth="582.0">
+                     <children>
+                        <TableView fx:id="completedTaskTable" prefHeight="577.0" prefWidth="364.0" HBox.hgrow="ALWAYS">
+                          <columns>
+                            <!--<TableColumn fx:id="completedTaskIdColumn" prefWidth="30.0" text="№" />-->
+                            <TableColumn fx:id="completedTaskNameColumn" prefWidth="202.0" text="Задача" />
+                            <TableColumn fx:id="completedTaskPointsColumn" prefWidth="81.0" text="Баллы" />
+                          </columns>
+                        </TableView>
+                        <TableView fx:id="completedMotivatorTable" prefHeight="573.0" prefWidth="372.0">
+                          <columns>
+                            <TableColumn fx:id="completedMotivatorName" prefWidth="217.0" text="Мотивация" />
+                            <TableColumn fx:id="completedMotivatorPoints" prefWidth="76.0" text="Цена" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            <HBox prefHeight="30.0" prefWidth="580.0">
+               <children>
+                  <AnchorPane prefHeight="50.0" prefWidth="580.0">
+                     <children>
+                        <Button fx:id="cancelReportForm" layoutX="6.0" layoutY="1.0" mnemonicParsing="false" onAction="#btnCancelReportForm" text="Назад" />
+                        <Label layoutX="112.0" layoutY="4.0" text="Заработанно баллов:">
+                        <font>
+                           <Font name="System Bold" size="12.0" />
+                        </font>
+                        </Label>
+                        <Label fx:id="counterCompletedTask" layoutX="239.0" layoutY="4.0" text="0" />
+                        <Separator layoutX="285.0" layoutY="-2.0" orientation="VERTICAL" prefHeight="25.0" />
+                        <Label layoutX="400.0" layoutY="3.0" text="Потраченно баллов:">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="counterCompletedMotivations" layoutX="524.0" layoutY="3.0" text="0" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
