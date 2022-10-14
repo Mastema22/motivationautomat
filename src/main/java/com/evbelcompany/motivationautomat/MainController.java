@@ -3,6 +3,7 @@ package com.evbelcompany.motivationautomat;
 
 import com.evbelcompany.motivationautomat.models.Motivator;
 import com.evbelcompany.motivationautomat.models.Task;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +13,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
@@ -42,8 +46,9 @@ public class MainController implements Serializable {
     private String status;
 
     //--------------------------Main file for save/load data------------------------------
-    File fileBaseTasks = new File("src/main/java/com/evbelcompany/motivationautomat/data/base01.tmb");
-    File fileBaseMotivations = new File("src/main/java/com/evbelcompany/motivationautomat/data/base02.tmb");
+    private String userName = System.getProperty("user.name");
+    private File fileBaseTasks = new File("C://Users/" + userName + "/Motivation Automat/Data/base01.tmb");
+    private File fileBaseMotivations = new File("C://Users/" + userName + "/Motivation Automat/Data/base02.tmb");
 
     //-------------------------FXML elements for the new tasks-------------------------------
     @FXML
@@ -103,20 +108,16 @@ public class MainController implements Serializable {
 
     //-------------------------FXML of initialize-------------------------------
     @FXML
-    public void initialize() {
+    public void initialize(){
+
         realizedMotivationsController = new RealizedMotivationsController();
 
-        loadDataTasks();
-        loadDataMotivators();
-
         tableTasks.setEditable(true);
-        /*idColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("number"));*/
         taskColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("task"));
         pointsColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("point"));
         tableTasks.setItems(getTasksData());
 
         currentTableTask.setEditable(true);
-        /*currentIdColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("number"));*/
         currentTaskColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("task"));
         currentPointsColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("point"));
         currentTableTask.setItems(getCurrentTaskData());
@@ -126,10 +127,14 @@ public class MainController implements Serializable {
         countPointsMotivatorsColumn.setCellValueFactory(new PropertyValueFactory<Motivator, Integer>("points"));
         motivatorsTable.setItems(getMotivatorsData());
 
+        checkAndMakeFolderAndFilesBASE();
+
+        loadDataTasks();
+        loadDataMotivators();
+
         updateStatusInformation();
 
         delaySaveData();
-
     }
 
     //-----------------------------Metods for get observable lists---------------------------
@@ -383,9 +388,8 @@ public class MainController implements Serializable {
                     System.out.println("Loaded the completed tasks: " + task.getNumber() + task.getTask() + task.getPoint());
                 }
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception e){
+            System.out.println("First start");;
         }
     }
 
@@ -406,8 +410,8 @@ public class MainController implements Serializable {
                     System.out.println("Loaded the completed motivator: " + motivator.getMotivator() + " " + motivator.getPoints());
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }catch (Exception e) {
+            System.out.println("First start!");;
         }
     }
 
@@ -429,9 +433,7 @@ public class MainController implements Serializable {
         realizedMotivationsController = new RealizedMotivationsController();
         realizedMotivationsController.initializeRealizedMotivationsFrom();
         updateStatusInformation();
-
     }
-
 
     public void updateStatusInformation()  {
         int totalCompletedTasksCount = 0;
@@ -442,7 +444,7 @@ public class MainController implements Serializable {
         int pointsCompletedTask = 0;
         int pointsCompletedMotivation = 0;
         for (Task task : completedTaskDataReport) {
-             pointsCompletedTask += task.getPoint();
+            pointsCompletedTask += task.getPoint();
         }
         for (Motivator motivator : completedMotivatorsDataReport) {
             pointsCompletedMotivation += motivator.getPoints();
@@ -482,5 +484,23 @@ public class MainController implements Serializable {
         }
         potentialMotivations.setText(String.valueOf(countPotentialMotivation));
         System.out.println("The potential motivations were updated.");
+    }
+
+
+    private void checkAndMakeFolderAndFilesBASE()  {
+        Path file1 = Paths.get(fileBaseTasks.getAbsolutePath());
+        Path file2 = Paths.get(fileBaseMotivations.getAbsolutePath());
+        Path directoryBase = Paths.get(fileBaseTasks.getParent());
+
+        if(!Files.exists(directoryBase)) {
+            try {
+                Files.createDirectories(directoryBase);
+                Files.createFile(file1);
+                Files.createFile(file2);
+           }  catch (IOException exception) {
+                System.err.println("Problem with make a new base-files!");
+            }
+        }
+
     }
 }
