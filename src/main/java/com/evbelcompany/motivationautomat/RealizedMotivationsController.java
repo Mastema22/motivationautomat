@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -68,6 +69,7 @@ public class RealizedMotivationsController implements Initializable {
         Scene SCENE = new Scene(ROOT,600,700);
         STAGE.setScene(SCENE);
         STAGE.setTitle("Отчет");
+        STAGE.initStyle(StageStyle.UNDECORATED);
         STAGE.getIcons().add(new Image(Main.class.getResourceAsStream("icons/iconAppLarge.png")));
         STAGE.showAndWait();
     }

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Автомат Мотиваций"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0"
 #define MyAppPublisher "EVBEL STUDIO, Inc."
 #define MyAppExeName "MotivationAutomat.exe"
 
@@ -12,13 +12,12 @@
 AppId={{9DF19FB8-1099-441D-B42A-B83C50EFD303}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
+AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
-;PrivilegesRequired=lowest
-PrivilegesRequiredOverridesAllowed=dialog
+PrivilegesRequired=admin
 OutputDir=C:\Users\eugen\IdeaProjects\MotivationAutomat\out\artifacts\MotivationAutomat_jar
 OutputBaseFilename=MotivationAutomat_Setup_v1
 SetupIconFile=C:\Users\eugen\IdeaProjects\MotivationAutomat\src\main\resources\com\evbelcompany\motivationautomat\icons\iconAppLarge.ico
@@ -34,6 +33,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "C:\Users\eugen\IdeaProjects\MotivationAutomat\out\artifacts\MotivationAutomat_jar\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\eugen\IdeaProjects\MotivationAutomat\out\artifacts\MotivationAutomat_jar\jdk-19_windows-x64_bin.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall;
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -42,4 +42,5 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: {tmp}\jdk-19_windows-x64_bin.exe; StatusMsg: jdk-19 is installed. Please wait...
 

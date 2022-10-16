@@ -12,11 +12,10 @@
                <font>
                   <Font name="Verdana Bold Italic" size="12.0" />
                </font></Label>
-            <TableView fx:id="tableTasks" prefWidth="350.0" HBox.hgrow="ALWAYS">
+            <TableView fx:id="tableTasks" prefHeight="400.0" prefWidth="330.0" HBox.hgrow="ALWAYS">
               <columns>
-                <!--<TableColumn fx:id="idColumn" prefWidth="20.0" resizable="false" text="№" />-->
-                <TableColumn fx:id="taskColumn" prefWidth="255.0" resizable="false" text="Задача" />
-                <TableColumn fx:id="pointsColumn" prefWidth="75.0" resizable="false" text="К-во баллов" />
+                <TableColumn fx:id="taskColumn" prefWidth="260.0" resizable="false" text="Задача" />
+                <TableColumn fx:id="pointsColumn" prefWidth="50" resizable="false" text="К-во баллов" />
               </columns>
             </TableView>
             <HBox>
@@ -38,11 +37,10 @@
                <font>
                   <Font name="Verdana Pro Bold Italic" size="12.0" />
                </font></Label>
-            <TableView fx:id="currentTableTask" prefWidth="350.0" HBox.hgrow="ALWAYS">
+            <TableView fx:id="currentTableTask" prefHeight="400.0" prefWidth="330.0" HBox.hgrow="ALWAYS">
               <columns>
-                <!--<TableColumn fx:id="currentIdColumn" prefWidth="20.0" resizable="false" text="№" />-->
-                <TableColumn fx:id="currentTaskColumn" prefWidth="255.0" resizable="false" text="Текущая задача" />
-                <TableColumn fx:id="currentPointsColumn" prefWidth="75.0" resizable="false" text="К-во баллов" />
+                <TableColumn fx:id="currentTaskColumn" prefWidth="273" resizable="false" text="Текущая задача" />
+                <TableColumn fx:id="currentPointsColumn" prefWidth="50" resizable="false" text="К-во баллов" />
               </columns>
             </TableView>
             <HBox>
@@ -63,10 +61,10 @@
                <font>
                   <Font name="Verdana Bold Italic" size="12.0" />
                </font></Label>
-            <TableView fx:id="motivatorsTable" prefWidth="250.0" HBox.hgrow="ALWAYS">
+            <TableView fx:id="motivatorsTable" prefHeight="400.0" prefWidth="333.0" HBox.hgrow="ALWAYS">
               <columns>
-                <TableColumn fx:id="motivatorsColumn" prefWidth="209.0" resizable="false" text="Мотивация" />
-                <TableColumn fx:id="countPointsMotivatorsColumn" prefWidth="65.0" text="Цена" />
+                <TableColumn fx:id="motivatorsColumn" prefWidth="275.0" resizable="false" text="Мотивация" />
+                <TableColumn fx:id="countPointsMotivatorsColumn" prefWidth="50.0" text="Цена" />
               </columns>
             </TableView>
              <HBox>
@@ -82,7 +80,7 @@
              </HBox>
          </children>
       </VBox>
-      <VBox HBox.hgrow="ALWAYS">
+      <VBox prefHeight="450.0" prefWidth="222.0" HBox.hgrow="ALWAYS">
          <children>
             <Label text="Текущие показатели">
                <font>

@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -51,6 +52,7 @@ public class EnterFormController implements Serializable {
          Scene SCENE = new Scene(ROOT,300,140);
          STAGE.setScene(SCENE);
          STAGE.setTitle("Новая задача");
+         STAGE.initStyle(StageStyle.UNDECORATED);
          STAGE.getIcons().add(new Image(Main.class.getResourceAsStream("icons/iconAppLarge.png")));
          STAGE.showAndWait();
         }
