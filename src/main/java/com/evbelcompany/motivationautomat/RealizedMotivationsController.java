@@ -189,7 +189,6 @@ public class RealizedMotivationsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         completedTaskTable.setEditable(true);
-        /*completedTaskIdColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("number"));*/
         completedTaskNameColumn.setCellValueFactory(new PropertyValueFactory<Task, String>("task"));
         completedTaskPointsColumn.setCellValueFactory(new PropertyValueFactory<Task, Integer>("point"));
         completedTaskTable.setItems(mainController.getCompletedTasksDataReport());

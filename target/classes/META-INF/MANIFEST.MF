@@ -1,3 +1,5 @@
 Manifest-Version: 1.0
-Main-Class: com.evbelcompany.motivationautomat.Main
+Built-By: eugen
+Build-Jdk: 19
+Created-By: Maven Integration for Eclipse
 

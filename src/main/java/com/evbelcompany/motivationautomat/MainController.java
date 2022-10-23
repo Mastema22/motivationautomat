@@ -3,7 +3,6 @@ package com.evbelcompany.motivationautomat;
 
 import com.evbelcompany.motivationautomat.models.Motivator;
 import com.evbelcompany.motivationautomat.models.Task;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -302,13 +301,23 @@ public class MainController implements Serializable {
     public void btnAchiveMotivation(ActionEvent actionEvent) throws IOException {
         int selectedIndex = motivatorsTable.getSelectionModel().getSelectedIndex();
         if(selectedIndex >= 0) {
-            System.out.println("Achieved the motivation");
             motivator = motivatorsData.get(selectedIndex);
+
+            if (checkTaskVsMotivation(motivator) == true) {
+            System.out.println("Achieved the motivation");
             motivator.setStatus("COMPLETED");
             addCompletedMotivatorsDataReport(motivator);
             System.out.println("Go to the report: " + motivator.getMotivator() + " " + motivator.getPoints() + " " + motivator.getStatus());
             motivatorsTable.getItems().remove(selectedIndex);
             updateStatusInformation();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Внимание!");
+                alert.setHeaderText("Недостаточно баллов для реализации мотивации.");
+                alert.setContentText("Пожалуйста, выбери мотивацию в которой достаточно баллов для реализации.");
+                alert.showAndWait();
+            }
+
         }else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Внимание!");
@@ -502,5 +511,11 @@ public class MainController implements Serializable {
             }
         }
 
+    }
+
+    private boolean checkTaskVsMotivation(Motivator motivator){
+        if (motivator.getPoints() <= Integer.parseInt(availablePoints.getText())) {
+            return true;
+        } else return false;
     }
 }

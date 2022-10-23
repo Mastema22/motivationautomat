@@ -86,7 +86,7 @@
                <font>
                   <Font name="Verdana Bold Italic" size="12.0" />
                </font></Label>
-            <AnchorPane>
+            <AnchorPane prefHeight="399.0" prefWidth="219.0">
                <children>
                   <Label layoutX="12.0" layoutY="39.0" prefHeight="20.0" text="Доступные баллы:">
                      <font>
@@ -129,7 +129,12 @@
                      <font>
                         <Font name="Verdana Pro Bold Italic" size="12.0" />
                      </font></Label>
-                  <Button layoutX="138.0" layoutY="9.0" mnemonicParsing="false" onAction="#btnReport" text="Отчет" />
+                  <Button layoutX="158.0" layoutY="172.0" mnemonicParsing="false" onAction="#btnReport" text="Отчет" />
+                  <Label layoutX="8.0" layoutY="365.0" text="EVBELSTUDIO">
+                     <font>
+                        <Font name="Verdana Pro Black Italic" size="24.0" />
+                     </font>
+                  </Label>
                </children>
             </AnchorPane>
          </children>

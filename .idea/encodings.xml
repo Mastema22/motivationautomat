@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/evbelcompany/motivationautomat/EnterFormController.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/evbelcompany/motivationautomat/Main.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/evbelcompany/motivationautomat/MainController.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>
 </project>
